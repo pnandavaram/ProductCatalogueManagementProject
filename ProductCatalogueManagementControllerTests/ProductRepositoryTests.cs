@@ -81,48 +81,55 @@ public class ProductRepositoryTests
 
         Assert.That(result, !Is.Null);
     }
-    //[Test]
-    //public async Task GetAllProductInfo_ShouldReturnEmptyList_WhenNoData()
-    //{
-    //    using var context = CreateContext();
-    //    var repo = new ProductRepository(context, _loggerMock.Object);
 
-    //    var result = await repo.GetAllProductInfo();
+    [Test]
+    public async Task GetAllProductInfo_ShouldReturnEmptyList_WhenNoData()
+    {
+        using var context = CreateContext();
 
-    //    Assert.IsNotNull(result);
-    //    Assert.AreEqual(0, result.Count);
-    //}
-    //[Test]
-    //public async Task GetProductInfoById_ShouldReturnProduct_WhenExists()
-    //{
-    //    var id = Guid.NewGuid();
+        var repo = new ProductRepository(context, _loggerMock.Object);
 
-    //    using (var context = CreateContext())
-    //    {
-    //        context.Products.Add(new ProductData
-    //        {
-    //            Id = id,
-    //            Name = "Test"
-    //        });
-    //        await context.SaveChangesAsync();
-    //    }
+        var result = await repo.GetAllProductInfo();
 
-    //    using var context2 = CreateContext();
-    //    var repo = new ProductRepository(context2, _loggerMock.Object);
+        Assert.That(result, !Is.Null);
+        Assert.That(result.Count, Is.Zero);
+    }
 
-    //    var result = await repo.GetProductInfoById(id);
+    [Test]
+    public async Task GetProductInfoById_ShouldReturnProduct_WhenExists()
+    {
+        var id = Guid.NewGuid();
 
-    //    Assert.IsNotNull(result);
-    //    Assert.AreEqual(id, result.Id);
-    //}
-    //[Test]
-    //public async Task GetProductInfoById_ShouldReturnNull_WhenNotFound()
-    //{
-    //    using var context = CreateContext();
-    //    var repo = new ProductRepository(context, _loggerMock.Object);
+        using (var context = CreateContext())
+        {
+            context.Products.Add(new ProductData
+            {
+                Id = id,
+                Name = "Books",
+                Description = "Fiction & Horror books"
+            });
+            await context.SaveChangesAsync();
+        }
 
-    //    var result = await repo.GetProductInfoById(Guid.NewGuid());
+        using var context2 = CreateContext();
 
-    //    Assert.IsNull(result);
-    //}
+        var repo = new ProductRepository(context2, _loggerMock.Object);
+
+        var result = await repo.GetProductInfoById(id);
+
+        Assert.That(result, !Is.Null);
+        Assert.That(result.Description, !Is.Null);
+        Assert.That(result.Description, Is.EqualTo("Fiction & Horror books"));
+    }
+    [Test]
+    public async Task GetProductInfoById_ShouldReturnNull_WhenNotFound()
+    {
+        using var context = CreateContext();
+
+        var repo = new ProductRepository(context, _loggerMock.Object);
+
+        var result = await repo.GetProductInfoById(Guid.NewGuid());
+
+        Assert.That(result, Is.Null);
+    }
 }
