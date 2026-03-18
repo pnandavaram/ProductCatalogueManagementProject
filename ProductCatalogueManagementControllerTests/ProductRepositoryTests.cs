@@ -5,12 +5,13 @@ using Moq;
 using ProductCatalogueManagement.Models;
 using ProductCatalogueManagement.Repository;
 using ProductCatalogueManagement.Repository.Repository;
-using System.Diagnostics.CodeAnalysis;
 
 public class ProductRepositoryTests
 {
     private SqliteConnection _connection;
+
     private DbContextOptions<AppDbContext> _options;
+
     private Mock<ILogger<ProductRepository>> _loggerMock;
 
     [SetUp]
@@ -40,6 +41,7 @@ public class ProductRepositoryTests
     {
         return new AppDbContext(_options);
     }
+
     [Test]
     public async Task AddNewProduct_ShouldPersistProduct()
     {
@@ -121,6 +123,7 @@ public class ProductRepositoryTests
         Assert.That(result.Description, !Is.Null);
         Assert.That(result.Description, Is.EqualTo("Fiction & Horror books"));
     }
+
     [Test]
     public async Task GetProductInfoById_ShouldReturnNull_WhenNotFound()
     {

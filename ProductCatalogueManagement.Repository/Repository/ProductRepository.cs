@@ -21,8 +21,6 @@ namespace ProductCatalogueManagement.Repository.Repository
         {
             try
             {
-                _logger.LogInformation("Adding new product: {ProductName}", product.Name);
-
                 _context.Products.Add(product);
 
                 await _context.SaveChangesAsync();
@@ -43,14 +41,11 @@ namespace ProductCatalogueManagement.Repository.Repository
         {
             try
             {
-                _logger.LogInformation("Retrieving all product information.");
-
                 var products = await _context.Products.ToListAsync();
 
                 _logger.LogInformation("Retrieved {ProductCount} products.", products.Count);
 
                 return products;
-
             }
             catch (Exception ex)
             {

@@ -40,6 +40,7 @@ namespace ProductCatalogueManagementControllerTests
             Assert.That(getResult.Value, Is.EqualTo(allProducts));
             Assert.That(getResult.StatusCode, Is.EqualTo(200));
         }
+
         [Test]
         public async Task Get_ReturnsNotFound_WhenNoProducts()
         {
@@ -84,7 +85,6 @@ namespace ProductCatalogueManagementControllerTests
             var getResult = (ObjectResult)result;
 
             Assert.That(getResult.StatusCode, Is.EqualTo(200));
-    
         }
 
         [Test]

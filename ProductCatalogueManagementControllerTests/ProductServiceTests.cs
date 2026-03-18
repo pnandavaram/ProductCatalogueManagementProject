@@ -10,7 +10,9 @@ namespace ProductCatalogueManagementControllerTests
     public class ProductServiceTests
     {
         private Mock<IProductRepository> _repoMock;
+
         private Mock<IInventoryService> _inventoryMock;
+
         private ProductService _productService;
 
         [SetUp]

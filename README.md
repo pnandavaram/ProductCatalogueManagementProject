@@ -22,6 +22,10 @@ Client → API/Controller Layer → Service Layer → Repository Layer → Datab
 - Get product by ID
 - Inventory integration
 
+## 🚀 Further Improvements
+- Implement update and delete product endpoints
+- Implement Authentication and Authorization
+
 
 ## 🔌 API Endpoints
 

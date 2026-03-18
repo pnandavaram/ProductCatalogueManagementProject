@@ -21,7 +21,11 @@ namespace ProductCatalogueManagement.API.Controllers
         {
             var productInfo = await _service.GetAllProductInfo();
 
-            if (productInfo.Count == 0)
+            if (productInfo is null)
+            {
+                return StatusCode(500, "An unexpected error occurred. Please try again later.");
+            }
+            else if (productInfo.Count == 0)
             {
                 return NotFound("Unable to find products");
             }
@@ -52,7 +56,6 @@ namespace ProductCatalogueManagement.API.Controllers
 
                 default:
                     return StatusCode(500, "An unexpected error occurred. Please try again later.");
-
             }
         }
 
@@ -78,7 +81,6 @@ namespace ProductCatalogueManagement.API.Controllers
 
                 default:
                     return StatusCode(500, "An unexpected error occurred. Please try again later.");
-
             }
         }
     }

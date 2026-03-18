@@ -25,8 +25,6 @@ namespace ProductCatalogueManagement.Services.Services
         {
             try
             {
-                _logger.LogInformation("Calling Inventory API for ProductId: {ProductId}", productId);
-
                 var request = new HttpRequestMessage(HttpMethod.Get, $"inventory/{productId}");
 
                 if (_httpContextAccessor.HttpContext?.Items.TryGetValue("X-Correlation-ID", out var correlationId) == true)

@@ -39,74 +39,87 @@ namespace ProductCatalogueManagement.Services.Services
 
         public async Task<List<ProductInfoResponse>> GetAllProductInfo()
         {
-            var allProducts = await _repo.GetAllProductInfo();
-
             var result = new List<ProductInfoResponse>();
-
-            foreach (var product in allProducts)
+            
+            try
             {
-                ProductInfoResponse dto = new ProductInfoResponse
-                {
-                    Id = product.Id,
-                    Name = product.Name,
-                    Description = product.Description
-                };
+                var allProducts = await _repo.GetAllProductInfo();
 
-                
-                var inventory = await _inventoryService.GetInventoryAsync(product.Id);
-
-                if(inventory.inventoryApiStatus.Equals(InventoryAPIStatus.Unavailable))
+                foreach (var product in allProducts)
                 {
-                    dto.Status = "Inventory Data Unavailable";
+                    ProductInfoResponse dto = new ProductInfoResponse
+                    {
+                        Id = product.Id,
+                        Name = product.Name,
+                        Description = product.Description
+                    };
+
+
+                    var inventory = await _inventoryService.GetInventoryAsync(product.Id);
+
+                    if (inventory.inventoryApiStatus.Equals(InventoryAPIStatus.Unavailable))
+                    {
+                        dto.Status = "Inventory Data Unavailable";
+                    }
+                    else if (inventory.inventoryApiStatus.Equals(InventoryAPIStatus.Available))
+                    {
+                        dto.Price = inventory.price;
+                        dto.Stock = inventory.stock;
+                        dto.Status = "OK";
+                    }
+
+                    result.Add(dto);
                 }
-                else if (inventory.inventoryApiStatus.Equals(InventoryAPIStatus.Available))
-                {
-                    dto.Price = inventory.price;
-                    dto.Stock = inventory.stock;
-                    dto.Status = "OK";
-                }                          
-                
-                result.Add(dto);
-            }
 
-            return result;            
+                return result;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public async Task<(ProductInfoResponse?, ProductStatus)> GetProductInfoById(Guid id)
         {
-            ProductData productInfo = null;
-
-
-            productInfo = await _repo.GetProductInfoById(id);
-
-            if (productInfo == null)
+            try
             {
-                return (null, ProductStatus.ProductNotFound);
-            }
+                ProductData productInfo = null;
 
-            var (price, stock, status) = await _inventoryService.GetInventoryAsync(id);
+                productInfo = await _repo.GetProductInfoById(id);
 
-            if (status.Equals(InventoryAPIStatus.Unavailable))
-            {
-                return (new ProductInfoResponse
+                if (productInfo == null)
                 {
-                    Id = productInfo.Id,
-                    Name = productInfo.Name,
-                    Description = productInfo.Description,
-                    Status = "Inventory Data Unavailable"
-                }, ProductStatus.InventoryNotFound);
-            }
-            else
-            {
-                return (new ProductInfoResponse
+                    return (null, ProductStatus.ProductNotFound);
+                }
+
+                var (price, stock, status) = await _inventoryService.GetInventoryAsync(id);
+
+                if (status.Equals(InventoryAPIStatus.Unavailable))
                 {
-                    Id = productInfo.Id,
-                    Name = productInfo.Name,
-                    Description = productInfo.Description,
-                    Price = price,
-                    Stock = stock,
-                    Status = "OK"
-                }, ProductStatus.ProductFound);
+                    return (new ProductInfoResponse
+                    {
+                        Id = productInfo.Id,
+                        Name = productInfo.Name,
+                        Description = productInfo.Description,
+                        Status = "Inventory Data Unavailable"
+                    }, ProductStatus.InventoryNotFound);
+                }
+                else
+                {
+                    return (new ProductInfoResponse
+                    {
+                        Id = productInfo.Id,
+                        Name = productInfo.Name,
+                        Description = productInfo.Description,
+                        Price = price,
+                        Stock = stock,
+                        Status = "OK"
+                    }, ProductStatus.ProductFound);
+                }
+            }
+            catch
+            {
+                return (null, ProductStatus.Failed);
             }
         }
     }
